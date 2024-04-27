@@ -12,29 +12,37 @@ def getPrices(queryString):
     df = pd.json_normalize(items)
     while(nextPage):
         response = requests.get(nextPage)
+        print(response.status_code)
         json_data = json.loads(response.text)
         nextPage = json_data['NextPageLink']
         items = json_data['Items']
-        df = pd.json_normalize(items)
+        df = pd.concat([df, pd.json_normalize(items)])
     return df
 
 def vmQueryString(vm):
     with open("resources.json", "r") as f:
         parsed_json=json.load(f)
-    query_vm = (
+    query_region = (
         "(armRegionName eq 'Global' " +
         f"or armRegionName eq '{parsed_json['TRE']['armRegionName']}') " 
-    )
-    query_vm = query_vm + (
-        f"and (armSkuName eq '{vm}' " +
+        )
+    query_vm = (
+        f"armSkuName eq '{vm}' " +
         "and priceType eq 'Consumption' " +
         "and contains(meterName, 'Spot') " +
         "and contains(productName, 'Windows') "
-    )
-    query_vm = query_vm + (
-        f"or (meterName eq '{parsed_json['TRE']['VirtualMachine']['Required']['Disk']['meterName']}')) " 
-    )
-    return query_vm
+        )
+    query_required = ""
+    for item in parsed_json['TRE']['VirtualMachine']['Required']:
+        if parsed_json['TRE']['VirtualMachine']['Required'][item]["identifier"] and parsed_json['TRE']['VirtualMachine']['Required'][item]["value"]:
+            query_required = (
+                f"({parsed_json['TRE']['VirtualMachine']['Required'][item]["identifier"]} " + 
+                f"eq '{parsed_json['TRE']['VirtualMachine']['Required'][item]["value"]}') " 
+                )
 
-result =(getPrices(vmQueryString(vm='Standard_D16s_v4')))
-print(result)
+    if query_required:
+        query_full = f"{query_region} and ({query_vm} or {query_required})"
+    else:
+        query_full = f"{query_region} and {query_vm}"
+
+    return query_full
