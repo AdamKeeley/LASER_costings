@@ -4,42 +4,66 @@
         "armRegionName" : "uksouth"
         , "VirtualMachine":
         {
-            "Size":
+            "identifier": "armSkuName"
+            , "value":
             [
                 "Standard_D2s_v4"
                 , "Standard_D4s_v4"
                 , "Standard_D8s_v4"
                 , "Standard_D16s_v4"
             ]
-            , "Required":
+            , "required":
             {
-                "Network Interface":null
-                ,"Disk":
-                    {
-                        "Type":"Standard SSD LRS"
-                        ,"Size":128
-                        ,"skuName":"E10 LRS"
-                        ,"meterName":"E10 LRS Disk"
-                    }
+                "Disk":
+                {
+                    "identifier":"meterName"
+                    , "value":"E10 LRS Disk"
+                }
+                , "Network Interface":
+                {
+                    "identifier": null
+                    , "value": null
+                }
             }
         }
         , "StorageAccount":
         {
-            "Performance":"Standard"
-            ,"Replication":"Zone-redundant storage (ZRS)"
-            , "AccountKind":"StorageV2 (general purpose v2)"
-            , "Required":{
-                "Private Endpoint":{
-                    "meterName":"Standard Private Endpoint"
+            "identifier": "productName"
+            , "value": "Files v2"
+            , "required":{
+                "Private Endpoint":
+                {
+                    "identifier":"meterName"
+                    , "value":"Standard Private Endpoint"
                 }
-                , "Network Interface":null
+                , "Network Interface":
+                {
+                    "identifier": null
+                    , "value": null
+                }
+            }
+
+            , "Performance":"Standard"
+            , "Replication":"Zone-redundant storage (ZRS)"
+            , "AccountKind":"StorageV2 (general purpose v2)"
+        }
+        , "required":
+        {
+            "Disk Encryption Set":
+            {
+                "identifier": null
+                , "value": null
+            }
+            , "Recovery Services vault":
+            {
+                "identifier": null
+                , "value": null
+            }
+            , "Network security group":
+            {
+                "identifier": null
+                , "value": null
             }
         }
-        , "Required":
-        [
-            "Disk Encryption Set"
-            , "Recovery Services vault"
-            , "Network security group"
-        ]
     }
 }
