@@ -2,6 +2,18 @@ import json
 import requests
 import pandas as pd
 
+def combinePrices():
+    df = pd.DataFrame()
+    with open("resources.json", "r") as f:
+        parsed_json=json.load(f)
+    for item in parsed_json['TRE']:
+        result = getPrices(getQueryString(item))
+        if isinstance(result, pd.DataFrame):
+            df = pd.concat([df, result], ignore_index=True)
+        else: 
+            print(f"Error fetching costs for TRE resourceType '{item}': {result}")
+    return df
+
 def getPrices(queryString):
     if queryString:
         api_url = f"https://prices.azure.com/api/retail/prices?currencyCode='GBP'&api-version=2021-10-01-preview"
