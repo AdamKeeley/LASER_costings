@@ -16,7 +16,7 @@ def getPrices(queryString):
                 json_data = json.loads(response.text)
                 nextPage = json_data['NextPageLink']
                 items = json_data['Items']
-                df = pd.concat([df, pd.json_normalize(items)])
+                df = pd.concat([df, pd.json_normalize(items)], ignore_index=True)
             return df[df['tierMinimumUnits']==0]
         else:
             return f"Failure to fetch prices (status_code = {response.status_code})."
