@@ -12,7 +12,7 @@
                 , "Standard_D8s_v4"
                 , "Standard_D16s_v4"
             ]
-            , "required":
+            , "Required":
             {
                 "Disk":
                 {
@@ -28,9 +28,49 @@
         }
         , "StorageAccount":
         {
-            "identifier": "productName"
-            , "value": "Files v2"
-            , "required":{
+            "Common": 
+            {
+                "Product":
+                {
+                    "identifier": "productName"
+                    , "value": "General Block Blob v2"
+                }
+                , "Sku": 
+                {
+                    "identifier": "skuName"
+                    , "value": "Hot ZRS"
+                }
+            }
+            , "Component": 
+            {
+                "Capacity": 
+                {
+                    "identifier": "meterName"
+                    , "value": "Hot ZRS Data Stored"
+                }
+                , "Write Operations": 
+                {
+                    "identifier": "meterName"
+                    , "value": "Hot ZRS Write Operations"
+                }
+                , "List and Create Container Operations": 
+                {
+                    "identifier": "meterName"
+                    , "value": "ZRS List and Create Container Operations"
+                }
+                , "Read operations": 
+                {
+                    "identifier": "meterName"
+                    , "value": "Hot ZRS Read Operations"
+                }
+                , "All other operations": 
+                {
+                    "identifier": "meterName"
+                    , "value": "All Other Operations"
+                }
+            }
+            , "Required":
+            {
                 "Private Endpoint":
                 {
                     "identifier":"meterName"
@@ -42,12 +82,8 @@
                     , "value": null
                 }
             }
-
-            , "Performance":"Standard"
-            , "Replication":"Zone-redundant storage (ZRS)"
-            , "AccountKind":"StorageV2 (general purpose v2)"
         }
-        , "required":
+        , "Required":
         {
             "Disk Encryption Set":
             {
