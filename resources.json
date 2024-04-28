@@ -1,28 +1,53 @@
 {
-    "TRE":
+    "armRegionName" : "uksouth"
+    ,"TRE":
     {
-        "armRegionName" : "uksouth"
-        , "VirtualMachine":
+        
+        "VirtualMachine":
         {
-            "identifier": "armSkuName"
-            , "value":
-            [
-                "Standard_D2s_v4"
-                , "Standard_D4s_v4"
-                , "Standard_D8s_v4"
-                , "Standard_D16s_v4"
-            ]
+            "Common": 
+            {
+                "Consumption": 
+                {
+                    "identifier": "priceType"
+                    , "value": "Consumption"
+                    , "operator": "eq"
+                }
+                , "Spot":
+                {
+                    "identifier": "meterName"
+                    , "value": "Spot"
+                    , "operator": "contains"
+                }
+                , "Windows":
+                {
+                    "identifier": "productName"
+                    , "value": "Windows"
+                    , "operator": "contains"
+                }
+            }
+            , "Component": 
+            {
+                "Size":
+                {
+                    "identifier": "armSkuName"
+                    , "value": "Standard_D4s_v4"
+                    , "operator": "eq"
+                }
+            }
             , "Required":
             {
                 "Disk":
                 {
                     "identifier":"meterName"
                     , "value":"E10 LRS Disk"
+                    , "operator": "eq"
                 }
                 , "Network Interface":
                 {
                     "identifier": null
                     , "value": null
+                    , "operator": null
                 }
             }
         }
@@ -34,11 +59,13 @@
                 {
                     "identifier": "productName"
                     , "value": "General Block Blob v2"
+                    , "operator": "eq"
                 }
                 , "Sku": 
                 {
                     "identifier": "skuName"
                     , "value": "Hot ZRS"
+                    , "operator": "eq"
                 }
             }
             , "Component": 
@@ -47,26 +74,31 @@
                 {
                     "identifier": "meterName"
                     , "value": "Hot ZRS Data Stored"
+                    , "operator": "eq"
                 }
                 , "Write Operations": 
                 {
                     "identifier": "meterName"
                     , "value": "Hot ZRS Write Operations"
+                    , "operator": "eq"
                 }
                 , "List and Create Container Operations": 
                 {
                     "identifier": "meterName"
                     , "value": "ZRS List and Create Container Operations"
+                    , "operator": "eq"
                 }
                 , "Read operations": 
                 {
                     "identifier": "meterName"
                     , "value": "Hot ZRS Read Operations"
+                    , "operator": "eq"
                 }
                 , "All other operations": 
                 {
                     "identifier": "meterName"
                     , "value": "All Other Operations"
+                    , "operator": "eq"
                 }
             }
             , "Required":
@@ -75,31 +107,41 @@
                 {
                     "identifier":"meterName"
                     , "value":"Standard Private Endpoint"
+                    , "operator": "eq"
                 }
                 , "Network Interface":
                 {
                     "identifier": null
                     , "value": null
+                    , "operator": null
                 }
             }
         }
         , "Required":
         {
-            "Disk Encryption Set":
+            "Common":null
+            , "Component":
             {
-                "identifier": null
-                , "value": null
+                "Disk Encryption Set":
+                {
+                    "identifier": null
+                    , "value": null
+                    , "operator": null
+                }
+                , "Recovery Services vault":
+                {
+                    "identifier": null
+                    , "value": null
+                    , "operator": null
+                }
+                , "Network security group":
+                {
+                    "identifier": null
+                    , "value": null
+                    , "operator": null
+                }
             }
-            , "Recovery Services vault":
-            {
-                "identifier": null
-                , "value": null
-            }
-            , "Network security group":
-            {
-                "identifier": null
-                , "value": null
-            }
+            , "Required":null
         }
     }
 }
