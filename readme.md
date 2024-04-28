@@ -27,30 +27,14 @@ Method to fetch the results from Azure Retail Prices REST API.
 Takes a string variable as a url `$filter` and returns a dataframe containing result of an API call.  
 Currency code (GBP) embedded in api url.  
 
-```python
-def getPrices(queryString):
-    api_url = f"https://prices.azure.com/api/retail/prices?currencyCode='GBP'&api-version=2021-10-01-preview"
-    response = requests.get(api_url, params={'$filter': queryString})
-    print(response.status_code)
-    json_data = json.loads(response.text)
-    nextPage = json_data['NextPageLink']
-    items = json_data['Items']
-    df = pd.json_normalize(items)
-    while(nextPage):
-        response = requests.get(nextPage)
-        json_data = json.loads(response.text)
-        nextPage = json_data['NextPageLink']
-        items = json_data['Items']
-        df = pd.json_normalize(items)
-    return df
-```
-
 ## TRE Design
  
 This should be applied to every `$filter` string query:
 ```
 (armRegionName eq 'Global' or armRegionName eq 'uksouth')
 ```
+The region `uksouth` is defined in `resources.json` and can be changed there if needed.  
+
 Basic elements of a standard (Type A) TRE:  
 
 ### VMs
@@ -67,23 +51,11 @@ Each VM in a TRE requries the following:
 Each Storage Account (usually just the one) in a TRE requries the following:
 |Resource|Identifed by|Example value|
 |---|---|---|
-|Storage Account|||
+|Storage Account|Multiple meterNames relating to various billable elements||
 |Private Endpoint|`meterName`|'Standard Private Endpoint'|
 |Network Interface*|unknown|unknown|
 
 *Appears there may be no non-negligable costs associated with Network Interface.  
-
-Potentially useful?
-- meterNames
-    - storageStored = 'Hot ZRS Data Stored'
-    - storageWrite = 'Hot ZRS Write Operations'
-    - storageList = 'Hot ZRS List Operations'
-    - storageRead = 'Hot Read Operations'
-    - storageOther = 'Hot Other Operations'
-- productNames
-    - storageProduct = 'Files v2'
-- skuNames
-    - storageSku = 'Hot ZRS'
 
 ### Shared Resources
 Resources needed for and shared across each TRE:  
