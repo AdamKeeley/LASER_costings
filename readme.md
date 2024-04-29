@@ -22,18 +22,48 @@ flowchart TD
     G --> H(Calculate monthly/annual costs)
 ```
 
-## getPrices(queryString)
-Method to fetch the results from Azure Retail Prices REST API.  
-Takes a string variable as a url `$filter` and returns a dataframe containing result of an API call.  
+## Functions
+
+### combinePrices()
+Iterates through each element of `['TRE']` in the definition json (i.e. `resourceType`) and combines the DataFrames returned by `getPrices` function into a single DataFrame.  
+
+### getPrices(queryString)
+Fetches the prices from Azure Retail Prices REST API.  
+Takes a string variable as a url `$filter` and returns a dataframe containing result of the API call.  
 Currency code (GBP) embedded in api url.  
 
+### getQueryString(resourceType)
+Constructs a `$filter` string for a single `resourceType` for use as an input to `getPrices`.  
+
+There are four elements:
+- Region
+    - This should be applied to every `$filter` string query: `(armRegionName eq 'Global' or armRegionName eq 'uksouth')`.  
+- Common
+    - Filters that need to be applied to all resources/meters within the `resourceType` for which the string is being constructed.  
+- Component
+    - The actual resources/meters that are being queried for.  
+- Required
+    - Additional resources/meters that are needed for every instance of the `resourceType` being queried for.  
+
+Calls `getQueryStringElement` to construct sub-string for each element.  
+
+Full `$filter` string constructed based on which of the four elements are defined in definition json.  
+
+### getQueryStringElement(resourceType, elementType)
+Constructs a `$filter` sub-string for specified `resourceType` and `elementType`.  
+
+Iterates over each item within definition JSON --> TRE --> resourceType --> elementType and builds a `$filter` clause based on three values:
+- identifier
+    - the field name of the API filter.  
+- operator
+    - the operator to be used in the filter (e.g. `eq`, `contains` etc.).  
+- value
+    - the value to be used in the filter that identifies the required resource/meter.  
+
+Each clause added to a list which is then joined as a string.  
+
 ## TRE Design
- 
-This should be applied to every `$filter` string query:
-```
-(armRegionName eq 'Global' or armRegionName eq 'uksouth')
-```
-The region `uksouth` is defined in `resources.json` and can be changed there if needed.  
+The region (e.g. `uksouth`) is defined in `resources.json` and can be changed there if needed.  
 
 Basic elements of a standard (Type A) TRE:  
 
