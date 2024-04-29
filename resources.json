@@ -12,12 +12,6 @@
                     , "value": "Consumption"
                     , "operator": "eq"
                 }
-                , "Spot":
-                {
-                    "identifier": "meterName"
-                    , "value": "Spot"
-                    , "operator": "contains"
-                }
                 , "Windows":
                 {
                     "identifier": "productName"
@@ -29,8 +23,8 @@
             {
                 "Size":
                 {
-                    "identifier": "armSkuName"
-                    , "value": "Standard_D4s_v4"
+                    "identifier": "meterName"
+                    , "value": "D4s v4"
                     , "operator": "eq"
                 }
             }
@@ -116,6 +110,42 @@
                 }
             }
         }
+        
+        , "RecoveryServicesVault":
+                {
+                    "Common":
+                    {
+                        "Backup":
+                        {
+                            "identifier": "productName"
+                            , "value": "Backup"
+                            , "operator": "eq"
+                        }
+                    }
+                    , "Component":
+                    {
+                        "Azure VM Protected Instances": 
+                        {
+                            "identifier": "meterName"
+                            , "value": "Azure VM Protected Instances"
+                            , "operator": "eq"
+                        }
+                        , "GRS Data Stored": 
+                        {
+                            "identifier": "meterName"
+                            , "value": "GRS Data Stored"
+                            , "operator": "eq"
+                        }
+                        , "Azure files Protected Instances": 
+                        {
+                            "identifier": "meterName"
+                            , "value": "Azure Files Protected Instances"
+                            , "operator": "eq"
+                        }
+                    }
+                    , "Required": null
+                }
+
         , "Required":
         {
             "Common":null
@@ -127,13 +157,8 @@
                     , "value": null
                     , "operator": null
                 }
-                , "Recovery Services vault":
-                {
-                    "identifier": null
-                    , "value": null
-                    , "operator": null
-                }
-                , "Network security group":
+                
+                , "Network Security Group":
                 {
                     "identifier": null
                     , "value": null
