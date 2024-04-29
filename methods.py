@@ -1,6 +1,7 @@
 import json
 import requests
 import pandas as pd
+import numpy as np
 
 def combinePrices():
     df = pd.DataFrame()
@@ -9,6 +10,7 @@ def combinePrices():
     for item in parsed_json['TRE']:
         result = getPrices(getQueryString(item))
         if isinstance(result, pd.DataFrame):
+            result.insert(0, "resourceType", item, True)
             df = pd.concat([df, result], ignore_index=True)
         else: 
             print(f"Error fetching costs for TRE resourceType '{item}': {result}")
@@ -41,19 +43,20 @@ def getQueryStringElement(resourceType, elementType):
     
     query_element = ""
     query_element_list = []
-    if parsed_json['TRE'][resourceType][elementType]:
-        for item in parsed_json['TRE'][resourceType][elementType]:
-            if parsed_json['TRE'][resourceType][elementType][item]['operator'] == 'eq':
+    elements = parsed_json['TRE'][resourceType][elementType]
+    if elements:
+        for item in elements:
+            if elements[item]['operator'] == 'eq':
                 query_element_list.append (
-                    f"{parsed_json['TRE'][resourceType][elementType][item]['identifier']} " + 
-                    f"{parsed_json['TRE'][resourceType][elementType][item]['operator']} " + 
-                    f"'{parsed_json['TRE'][resourceType][elementType][item]['value']}'"
+                    f"{elements[item]['identifier']} " + 
+                    f"{elements[item]['operator']} " + 
+                    f"'{elements[item]['value']}'"
                 )
-            if parsed_json['TRE'][resourceType][elementType][item]['operator'] == 'contains':
+            if elements[item]['operator'] == 'contains':
                 query_element_list.append (
-                    f"{parsed_json['TRE'][resourceType][elementType][item]['operator']}" + 
-                    f"({parsed_json['TRE'][resourceType][elementType][item]['identifier']}, " + 
-                    f"'{parsed_json['TRE'][resourceType][elementType][item]['value']}')"
+                    f"{elements[item]['operator']}" + 
+                    f"({elements[item]['identifier']}, " + 
+                    f"'{elements[item]['value']}')"
                 )
         if elementType == 'Common':
             query_element = ' and '.join(query_element_list)
@@ -85,3 +88,19 @@ def getQueryString(resourceType):
     else:
         query_full = ""
     return query_full
+
+def calcCosts(df, storageVolume, vmHours):
+    df = df[['resourceType', 'retailPrice', 'meterName', 'productName', 'skuName', 'serviceName', 'unitOfMeasure']]
+    
+    monthlyMultiplier = [
+        [(df['unitOfMeasure'] == '1 GB/Month')                                              , df.retailPrice * storageVolume]
+        , [(df['unitOfMeasure'] == '1 Hour') & (df['resourceType'] == 'VirtualMachine')     , df.retailPrice * vmHours]
+        , [(df['unitOfMeasure'] == '1 Hour') & (df['resourceType'] == 'StorageAccount')     , df.retailPrice * 730]
+        , [(df['unitOfMeasure'] == '1/Month')                                               , df.retailPrice * 1]
+        , [(df['unitOfMeasure'] == '10K')                                                   , df.retailPrice * 10]
+        ]
+
+    df['monthlyCost'] = np.select([item[0] for item in monthlyMultiplier], [item[1] for item in monthlyMultiplier])
+    df['annualCost'] = df['monthlyCost'] * 12
+
+    return df
